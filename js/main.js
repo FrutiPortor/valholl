@@ -20,6 +20,19 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 const STORAGE_KEY = 'valholl_feed';
 
+function convertYouTubeUrl(url) {
+  if (!url) return '';
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return `https://www.youtube.com/embed/${m[1]}`;
+  }
+  return url;
+}
+
 function getPosts() {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) return JSON.parse(stored);
@@ -97,10 +110,11 @@ function renderFeed() {
 }
 
 function renderPost(post) {
+  const videoUrl = convertYouTubeUrl(post.video);
   const media = post.image
     ? `<div class="post-media"><img src="${post.image}" alt="" loading="lazy"></div>`
-    : post.video
-      ? `<div class="post-media"><iframe src="${post.video}" allowfullscreen></iframe></div>`
+    : videoUrl
+      ? `<div class="post-media"><iframe src="${videoUrl}" allowfullscreen></iframe></div>`
       : '';
 
   const commentsHtml = post.comments.map(c =>
