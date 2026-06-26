@@ -3,6 +3,55 @@
 // Добавляй новые модули через // MODULE:
 // ==========================================
 
+// MODULE: Auth / Авторизация
+// ==========================================
+
+const AUTH_KEY = 'valholl_auth';
+const AUTH_PASS = 'valholl123';
+
+function isLoggedIn() {
+  return localStorage.getItem(AUTH_KEY) === 'true';
+}
+
+function login(password) {
+  if (password === AUTH_PASS) {
+    localStorage.setItem(AUTH_KEY, 'true');
+    return true;
+  }
+  return false;
+}
+
+function logout() {
+  localStorage.removeItem(AUTH_KEY);
+}
+
+function toggleAuth() {
+  if (isLoggedIn()) {
+    logout();
+    location.reload();
+  } else {
+    location.href = 'login.html';
+  }
+}
+
+function requireAuth() {
+  if (!isLoggedIn()) {
+    location.href = 'login.html';
+    return false;
+  }
+  return true;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.auth-btn').forEach(btn => {
+    btn.textContent = isLoggedIn() ? 'Выйти' : 'Войти';
+  });
+  const controls = document.getElementById('feed-controls');
+  if (controls && !isLoggedIn()) {
+    controls.style.display = 'none';
+  }
+});
+
 // MODULE: Плавный скролл для якорных ссылок
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
@@ -131,7 +180,7 @@ function renderPostCard(post) {
 
   return `
     <div class="post-card post-card--preview">
-      <div class="post-card-del" data-id="${post.id}" onclick="event.preventDefault(); deletePostCard(this.dataset.id)">✕</div>
+      ${isLoggedIn() ? `<div class="post-card-del" data-id="${post.id}" onclick="event.preventDefault(); deletePostCard(this.dataset.id)">✕</div>` : ''}
       <a href="post.html?id=${post.id}">
         ${media ? `<div class="post-card-media">${media}</div>` : ''}
         <div class="post-card-body">
@@ -176,7 +225,7 @@ function renderPostFull(post) {
         <span class="post-author">${post.author}</span>
         <span class="post-header-right">
           <span>${post.date}</span>
-          <button class="post-del-btn" data-id="${post.id}" onclick="deletePostFull(this.dataset.id)">✕</button>
+          ${isLoggedIn() ? `<button class="post-del-btn" data-id="${post.id}" onclick="deletePostFull(this.dataset.id)">✕</button>` : ''}
         </span>
       </div>
       <div class="post-text">${post.text}</div>
