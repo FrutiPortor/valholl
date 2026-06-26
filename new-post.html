@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Valhöll — Новый пост</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo">Valhöll</div>
+    <nav class="header-nav">
+      <ul>
+        <li><a href="feed.html">Лента</a></li>
+        <li><a href="index.html">Главная</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="section-block">
+    <h2 class="section-title">Новый пост</h2>
+
+    <div class="new-post-page-form">
+      <textarea id="post-text" class="new-post-input" placeholder="Текст поста..." rows="5"></textarea>
+      <input id="post-image" class="new-post-input" type="url" placeholder="Ссылка на картинку (необязательно)">
+      <input id="post-video" class="new-post-input" type="url" placeholder="Ссылка на YouTube (необязательно)">
+      <div class="new-post-actions">
+        <button class="feed-btn" onclick="publishPost()">Опубликовать</button>
+        <a href="feed.html" class="feed-btn feed-btn--cancel" style="display:inline-block;text-decoration:none">Отмена</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-logo">Valhöll</div>
+    <p class="footer-text">&copy; 2026 Valhöll. Все права защищены.</p>
+  </footer>
+
+  <script>
+    function publishPost() {
+      const text = document.getElementById('post-text').value.trim();
+      const image = document.getElementById('post-image').value.trim();
+      const video = document.getElementById('post-video').value.trim();
+      if (!text) return;
+
+      const posts = JSON.parse(localStorage.getItem('valholl_feed')) || [];
+      posts.unshift({
+        id: Date.now().toString(),
+        author: 'Valhöll',
+        date: new Date().toISOString().slice(0, 10),
+        text,
+        image,
+        video,
+        likes: 0,
+        liked: false,
+        comments: []
+      });
+      localStorage.setItem('valholl_feed', JSON.stringify(posts));
+      location.href = 'feed.html';
+    }
+  </script>
+</body>
+</html>
