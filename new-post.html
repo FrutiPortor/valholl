@@ -25,15 +25,37 @@
   </header>
 
   <section class="section-block">
-    <h2 class="section-title">Новый пост</h2>
+    <div class="new-post-page">
+      <div class="new-post-page-ornament">⚔️</div>
+      <h2 class="section-title">Новый пост</h2>
+      <p class="section-text">Поведай миру о своих подвигах</p>
 
-    <div class="new-post-page-form">
-      <textarea id="post-text" class="new-post-input" placeholder="Текст поста..." rows="5"></textarea>
-      <input id="post-image" class="new-post-input" type="url" placeholder="Ссылка на картинку (необязательно)">
-      <input id="post-video" class="new-post-input" type="url" placeholder="Ссылка на YouTube (необязательно)">
-      <div class="new-post-actions">
-        <button class="feed-btn" onclick="publishPost()">Опубликовать</button>
-        <a href="feed.html" class="feed-btn feed-btn--cancel" style="display:inline-block;text-decoration:none">Отмена</a>
+      <div class="new-post-page-form">
+        <div class="new-post-field">
+          <label class="new-post-label" for="post-text">Текст</label>
+          <textarea id="post-text" class="new-post-input" placeholder="О чём ты хочешь рассказать?" rows="5"></textarea>
+        </div>
+
+        <div class="new-post-field">
+          <label class="new-post-label" for="post-image">Изображение</label>
+          <div class="new-post-input-wrap">
+            <span class="new-post-input-icon">🖼️</span>
+            <input id="post-image" class="new-post-input new-post-input--with-icon" type="url" placeholder="https://example.com/image.jpg">
+          </div>
+        </div>
+
+        <div class="new-post-field">
+          <label class="new-post-label" for="post-video">Видео (YouTube)</label>
+          <div class="new-post-input-wrap">
+            <span class="new-post-input-icon">🎬</span>
+            <input id="post-video" class="new-post-input new-post-input--with-icon" type="url" placeholder="https://youtube.com/embed/...">
+          </div>
+        </div>
+
+        <div class="new-post-actions">
+          <button class="feed-btn" onclick="publishPost()">Опубликовать</button>
+          <a href="feed.html" class="feed-btn feed-btn--cancel">Отмена</a>
+        </div>
       </div>
     </div>
   </section>
