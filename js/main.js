@@ -94,6 +94,22 @@ function addComment(id, text) {
   savePosts(posts);
 }
 
+function deletePost(id) {
+  if (!confirm('Удалить пост?')) return;
+  const posts = getPosts().filter(p => p.id !== id);
+  savePosts(posts);
+}
+
+function deletePostCard(id) {
+  deletePost(id);
+  renderFeed();
+}
+
+function deletePostFull(id) {
+  deletePost(id);
+  location.href = 'feed.html';
+}
+
 // ---------- render card (grid preview) ----------
 
 function renderPostCard(post) {
@@ -106,20 +122,23 @@ function renderPostCard(post) {
   const shortText = post.text.length > 100 ? post.text.slice(0, 100) + '…' : post.text;
 
   return `
-    <a href="post.html?id=${post.id}" class="post-card post-card--preview">
-      ${media ? `<div class="post-card-media">${media}</div>` : ''}
-      <div class="post-card-body">
-        <div class="post-header">
-          <span class="post-author">${post.author}</span>
-          <span>${post.date}</span>
+    <div class="post-card post-card--preview">
+      <div class="post-card-del" data-id="${post.id}" onclick="event.preventDefault(); deletePostCard(this.dataset.id)">✕</div>
+      <a href="post.html?id=${post.id}">
+        ${media ? `<div class="post-card-media">${media}</div>` : ''}
+        <div class="post-card-body">
+          <div class="post-header">
+            <span class="post-author">${post.author}</span>
+            <span>${post.date}</span>
+          </div>
+          <div class="post-text">${shortText}</div>
+          <div class="post-card-stats">
+            <span>♥ ${post.likes || 0}</span>
+            <span>💬 ${post.comments.length}</span>
+          </div>
         </div>
-        <div class="post-text">${shortText}</div>
-        <div class="post-card-stats">
-          <span>♥ ${post.likes || 0}</span>
-          <span>💬 ${post.comments.length}</span>
-        </div>
-      </div>
-    </a>
+      </a>
+    </div>
   `;
 }
 
@@ -147,7 +166,10 @@ function renderPostFull(post) {
     <div class="post-card post-card--full" data-id="${post.id}">
       <div class="post-header">
         <span class="post-author">${post.author}</span>
-        <span>${post.date}</span>
+        <span class="post-header-right">
+          <span>${post.date}</span>
+          <button class="post-del-btn" data-id="${post.id}" onclick="deletePostFull(this.dataset.id)">✕</button>
+        </span>
       </div>
       <div class="post-text">${post.text}</div>
       ${media}
