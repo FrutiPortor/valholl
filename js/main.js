@@ -72,42 +72,60 @@ function savePosts(posts) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
 }
 
-function renderFeed() {
-  const container = document.getElementById('feed-container');
-  if (!container) return;
-
-  const posts = getPosts();
-  container.innerHTML = posts.map(post => renderPost(post)).join('');
-
-  document.querySelectorAll('.post-like-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const id = this.dataset.id;
-      toggleLike(id);
-    });
-  });
-
-  document.querySelectorAll('.post-comments-toggle').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const id = this.dataset.id;
-      toggleComments(id);
-    });
-  });
-
-  document.querySelectorAll('.comment-form').forEach(form => {
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const id = this.dataset.id;
-      const input = this.querySelector('.comment-input');
-      const text = input.value.trim();
-      if (text) {
-        addComment(id, text);
-        input.value = '';
-      }
-    });
-  });
+function getPostById(id) {
+  return getPosts().find(p => p.id === id);
 }
 
-function renderPost(post) {
+function toggleLike(id) {
+  const posts = getPosts();
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  post.liked = !post.liked;
+  post.likes += post.liked ? 1 : -1;
+  if (post.likes < 0) post.likes = 0;
+  savePosts(posts);
+}
+
+function addComment(id, text) {
+  const posts = getPosts();
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  post.comments.push({ author: 'Гость', text });
+  savePosts(posts);
+}
+
+// ---------- render card (grid preview) ----------
+
+function renderPostCard(post) {
+  const media = post.image
+    ? `<img src="${post.image}" alt="" loading="lazy">`
+    : post.video
+      ? `<div class="post-card-preview-icon">🎬</div>`
+      : '';
+
+  const shortText = post.text.length > 100 ? post.text.slice(0, 100) + '…' : post.text;
+
+  return `
+    <a href="post.html?id=${post.id}" class="post-card post-card--preview">
+      ${media ? `<div class="post-card-media">${media}</div>` : ''}
+      <div class="post-card-body">
+        <div class="post-header">
+          <span class="post-author">${post.author}</span>
+          <span>${post.date}</span>
+        </div>
+        <div class="post-text">${shortText}</div>
+        <div class="post-card-stats">
+          <span>♥ ${post.likes || 0}</span>
+          <span>💬 ${post.comments.length}</span>
+        </div>
+      </div>
+    </a>
+  `;
+}
+
+// ---------- render full post page (post.html) ----------
+
+function renderPostFull(post) {
   const videoUrl = convertVideoUrl(post.video);
   const isMp4 = videoUrl.match(/\.mp4$/i);
   const media = post.image
@@ -126,7 +144,7 @@ function renderPost(post) {
   const likesDisplay = post.likes || 0;
 
   return `
-    <div class="post-card" data-id="${post.id}">
+    <div class="post-card post-card--full" data-id="${post.id}">
       <div class="post-header">
         <span class="post-author">${post.author}</span>
         <span>${post.date}</span>
@@ -137,11 +155,9 @@ function renderPost(post) {
         <button class="post-like-btn${likedClass}" data-id="${post.id}">
           ♥ <span class="post-like-count">${likesDisplay}</span>
         </button>
-        <button class="post-comments-toggle" data-id="${post.id}">
-          💬 ${post.comments.length}
-        </button>
+        <span>💬 ${post.comments.length}</span>
       </div>
-      <div class="post-comments" id="comments-${post.id}">
+      <div class="post-comments post-comments--open">
         ${commentsHtml}
         <form class="comment-form" data-id="${post.id}">
           <input class="comment-input" type="text" placeholder="Написать комментарий..." required>
@@ -152,70 +168,55 @@ function renderPost(post) {
   `;
 }
 
-function toggleLike(id) {
+// ---------- feed grid (feed.html) ----------
+
+function renderFeed() {
+  const container = document.getElementById('feed-container');
+  if (!container) return;
+
   const posts = getPosts();
-  const post = posts.find(p => p.id === id);
-  if (!post) return;
-  post.liked = !post.liked;
-  post.likes += post.liked ? 1 : -1;
-  if (post.likes < 0) post.likes = 0;
-  savePosts(posts);
-  renderFeed();
+  container.innerHTML = posts.map(post => renderPostCard(post)).join('');
 }
 
-function toggleComments(id) {
-  const el = document.getElementById(`comments-${id}`);
-  if (el) {
-    el.classList.toggle('post-comments--open');
+// ---------- single post page (post.html) ----------
+
+function renderPostPage() {
+  const container = document.getElementById('post-container');
+  if (!container) return;
+
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  const post = getPostById(id);
+
+  if (!post) {
+    container.innerHTML = '<p class="section-text">Пост не найден.</p>';
+    return;
   }
+
+  container.innerHTML = renderPostFull(post);
+
+  container.querySelector('.post-like-btn')?.addEventListener('click', function () {
+    toggleLike(this.dataset.id);
+    renderPostPage();
+  });
+
+  container.querySelector('.comment-form')?.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const input = this.querySelector('.comment-input');
+    const text = input.value.trim();
+    if (text) {
+      addComment(this.dataset.id, text);
+      renderPostPage();
+    }
+  });
 }
 
-function addComment(id, text) {
-  const posts = getPosts();
-  const post = posts.find(p => p.id === id);
-  if (!post) return;
-  post.comments.push({ author: 'Гость', text });
-  savePosts(posts);
-  renderFeed();
-  setTimeout(() => {
-    const el = document.getElementById(`comments-${id}`);
-    if (el) el.classList.add('post-comments--open');
-  }, 0);
+// ---------- init ----------
+
+if (document.getElementById('feed-container')) {
+  document.addEventListener('DOMContentLoaded', renderFeed);
 }
 
-function showNewPostForm() {
-  document.getElementById('new-post-form').style.display = 'flex';
+if (document.getElementById('post-container')) {
+  document.addEventListener('DOMContentLoaded', renderPostPage);
 }
-
-function hideNewPostForm() {
-  document.getElementById('new-post-form').style.display = 'none';
-  document.getElementById('post-text').value = '';
-  document.getElementById('post-image').value = '';
-  document.getElementById('post-video').value = '';
-}
-
-function addNewPost() {
-  const text = document.getElementById('post-text').value.trim();
-  const image = document.getElementById('post-image').value.trim();
-  const video = document.getElementById('post-video').value.trim();
-  if (!text) return;
-
-  const posts = getPosts();
-  const newPost = {
-    id: Date.now().toString(),
-    author: 'Valhöll',
-    date: new Date().toISOString().slice(0, 10),
-    text,
-    image,
-    video,
-    likes: 0,
-    liked: false,
-    comments: []
-  };
-  posts.unshift(newPost);
-  savePosts(posts);
-  hideNewPostForm();
-  renderFeed();
-}
-
-document.addEventListener('DOMContentLoaded', renderFeed);
