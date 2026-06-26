@@ -317,13 +317,23 @@ window.publishNewPost = async function () {
 // ---------- UI update on auth change ----------
 
 function updateUI() {
+  const loggedIn = isLoggedIn();
+
   document.querySelectorAll('.auth-btn').forEach(btn => {
-    btn.textContent = isLoggedIn() ? 'Выйти' : 'Войти';
+    btn.textContent = loggedIn ? 'Выйти' : 'Войти';
+  });
+
+  document.querySelectorAll('.user-name').forEach(el => {
+    if (loggedIn && currentUser) {
+      el.textContent = (currentUser.displayName || currentUser.email || 'User') + ' ';
+    } else {
+      el.textContent = '';
+    }
   });
 
   const controls = document.getElementById('feed-controls');
   if (controls) {
-    controls.style.display = isLoggedIn() ? 'block' : 'none';
+    controls.style.display = loggedIn ? 'block' : 'none';
   }
 
   if (document.getElementById('feed-container')) {

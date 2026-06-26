@@ -57,6 +57,30 @@
   color: var(--color-accent);
 }
 
+.user-name {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+
+.nav-user-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .nav-user-item {
+    flex-direction: column;
+    gap: 0;
+  }
+  .user-name {
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+  }
+}
+
 /* burger */
 .burger {
   display: none;
