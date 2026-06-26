@@ -52,6 +52,23 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
+// MODULE: Mobile menu
+// ==========================================
+
+function toggleMenu() {
+  document.getElementById('nav-menu').classList.toggle('open');
+  document.querySelector('.burger').classList.toggle('active');
+}
+
+document.addEventListener('click', function (e) {
+  const menu = document.getElementById('nav-menu');
+  const burger = document.querySelector('.burger');
+  if (menu && burger && !e.target.closest('.header-nav')) {
+    menu.classList.remove('open');
+    burger.classList.remove('active');
+  }
+});
+
 // MODULE: Плавный скролл для якорных ссылок
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {

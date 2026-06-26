@@ -9,8 +9,8 @@
   left: 0;
   width: 100%;
   z-index: 100;
-  padding: 1rem 2rem;
-  background: rgba(10, 10, 10, 0.9);
+  padding: 0.75rem 1.5rem;
+  background: rgba(10, 10, 10, 0.95);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--color-border);
   display: flex;
@@ -20,28 +20,94 @@
 
 .header-logo {
   font-family: var(--font-gothic);
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: var(--color-accent);
   letter-spacing: 4px;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
 }
 
 .header-nav ul {
   list-style: none;
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
 }
 
-.header-nav a {
+.header-nav a,
+.header-nav .nav-btn {
   font-family: var(--font-gothic);
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   color: var(--color-text);
   letter-spacing: 2px;
   text-transform: uppercase;
   transition: color 0.3s;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
 }
 
-.header-nav a:hover {
+.header-nav a:hover,
+.header-nav .nav-btn:hover {
   color: var(--color-accent);
+}
+
+/* burger */
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+
+.burger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--color-text);
+  transition: 0.3s;
+}
+
+.burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.burger.active span:nth-child(2) { opacity: 0; }
+.burger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+@media (max-width: 768px) {
+  .burger { display: flex; }
+
+  .header-nav ul {
+    display: none;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    width: 100%;
+    flex-direction: column;
+    background: rgba(10, 10, 10, 0.98);
+    border-bottom: 1px solid var(--color-border);
+    padding: 1rem 0;
+    gap: 0;
+  }
+
+  .header-nav ul.open { display: flex; }
+
+  .header-nav ul li {
+    text-align: center;
+  }
+
+  .header-nav a,
+  .header-nav .nav-btn {
+    display: block;
+    padding: 0.85rem 1.5rem;
+    font-size: 1rem;
+  }
 }
 
 /* ========================================
