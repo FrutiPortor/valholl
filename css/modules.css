@@ -190,3 +190,240 @@
 .footer-text {
   opacity: 0.6;
 }
+
+/* ========================================
+   МОДУЛЬ: Feed / Лента
+   ======================================== */
+
+.feed {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.feed-controls {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.feed-btn {
+  font-family: var(--font-gothic);
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 0.7rem 2rem;
+  border: 1px solid var(--color-accent);
+  background: transparent;
+  color: var(--color-accent);
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.feed-btn:hover {
+  background: var(--color-accent);
+  color: #000;
+}
+
+.feed-btn--cancel {
+  border-color: var(--color-text-muted);
+  color: var(--color-text-muted);
+}
+
+.feed-btn--cancel:hover {
+  background: var(--color-text-muted);
+  color: #000;
+}
+
+.new-post-form {
+  max-width: 700px;
+  margin: 0 auto 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.new-post-input {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  padding: 0.75rem 1rem;
+  color: var(--color-text);
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.new-post-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.new-post-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.post-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  padding: 1.5rem;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.post-author {
+  font-family: var(--font-gothic);
+  color: var(--color-accent);
+  letter-spacing: 1px;
+}
+
+.post-text {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+
+.post-media {
+  margin-bottom: 1rem;
+}
+
+.post-media img {
+  width: 100%;
+  border-radius: 4px;
+  display: block;
+}
+
+.post-media iframe {
+  width: 100%;
+  height: 400px;
+  border: none;
+  border-radius: 4px;
+}
+
+.post-actions {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.post-like-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.3s;
+  font-family: var(--font-body);
+}
+
+.post-like-btn:hover {
+  color: #e04a4a;
+}
+
+.post-like-btn--liked {
+  color: #e04a4a;
+}
+
+.post-like-count {
+  font-size: 0.9rem;
+}
+
+.post-comments-toggle {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.3s;
+  font-family: var(--font-body);
+}
+
+.post-comments-toggle:hover {
+  color: var(--color-accent);
+}
+
+.post-comments {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  display: none;
+}
+
+.post-comments--open {
+  display: block;
+}
+
+.comment {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.comment:last-child {
+  border-bottom: none;
+}
+
+.comment-author {
+  color: var(--color-accent);
+  font-family: var(--font-gothic);
+  letter-spacing: 1px;
+  font-size: 0.85rem;
+}
+
+.comment-text {
+  margin-top: 0.25rem;
+  color: var(--color-text);
+}
+
+.comment-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.comment-input {
+  flex: 1;
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.75rem;
+  color: var(--color-text);
+  font-size: 0.9rem;
+}
+
+.comment-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.comment-submit {
+  font-family: var(--font-gothic);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: var(--color-accent);
+  border: none;
+  color: #000;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: opacity 0.3s;
+}
+
+.comment-submit:hover {
+  opacity: 0.8;
+}

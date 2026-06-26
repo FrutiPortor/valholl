@@ -26,6 +26,7 @@
       <ul>
         <li><a href="#about">О нас</a></li>
         <li><a href="#features">Особенности</a></li>
+        <li><a href="#feed">Лента</a></li>
         <li><a href="#contact">Контакты</a></li>
       </ul>
     </nav>
@@ -89,6 +90,34 @@
         </div>
 
       </div>
+  </section>
+
+  <!-- ============================================
+       МОДУЛЬ: Feed / Лента
+       Посты добавляются через JS в localStorage
+       или вручную HTML-блоком .post-card
+       ============================================ -->
+
+  <section class="section-block" id="feed">
+    <h2 class="section-title">Лента</h2>
+
+    <div class="feed-controls">
+      <button class="feed-btn feed-btn--new" onclick="showNewPostForm()">+ Новый пост</button>
+    </div>
+
+    <div id="new-post-form" class="new-post-form" style="display:none">
+      <textarea id="post-text" class="new-post-input" placeholder="Текст поста..." rows="3"></textarea>
+      <input id="post-image" class="new-post-input" type="url" placeholder="Ссылка на картинку (необязательно)">
+      <input id="post-video" class="new-post-input" type="url" placeholder="Ссылка на YouTube (необязательно)">
+      <div class="new-post-actions">
+        <button class="feed-btn" onclick="addNewPost()">Опубликовать</button>
+        <button class="feed-btn feed-btn--cancel" onclick="hideNewPostForm()">Отмена</button>
+      </div>
+    </div>
+
+    <div class="feed" id="feed-container">
+      <!-- Посты загружаются из localStorage + демо-посты -->
+    </div>
   </section>
 
   <!-- ============================================
