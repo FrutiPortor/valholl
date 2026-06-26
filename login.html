@@ -21,21 +21,24 @@
       text-align: center;
     }
 
-    .login-box input {
+    .login-btn-google {
+      font-family: var(--font-gothic);
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      border: 1px solid var(--color-accent);
+      background: transparent;
+      color: var(--color-accent);
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
       width: 100%;
-      font-family: var(--font-body);
-      background: var(--color-bg-secondary);
-      border: 1px solid var(--color-border);
-      padding: 0.85rem 1rem;
-      color: var(--color-text);
-      font-size: 1rem;
-      margin-bottom: 1.25rem;
-      text-align: center;
+      margin-top: 1.5rem;
     }
 
-    .login-box input:focus {
-      outline: none;
-      border-color: var(--color-accent);
+    .login-btn-google:hover {
+      background: var(--color-accent);
+      color: #000;
     }
 
     .login-error {
@@ -62,10 +65,10 @@
   <section class="section-block">
     <div class="login-box">
       <div style="font-size:2.5rem;margin-bottom:0.5rem;opacity:0.5">⚔️</div>
-      <h2 class="section-title" style="margin-bottom:1.5rem">Вход</h2>
-      <input id="pass-input" type="password" placeholder="Пароль" onkeydown="if(event.key==='Enter')doLogin()">
-      <button class="feed-btn" onclick="doLogin()" style="width:100%">Войти</button>
-      <div class="login-error" id="login-error">Неверный пароль</div>
+      <h2 class="section-title" style="margin-bottom:0.5rem">Вход</h2>
+      <p class="section-text" style="margin-bottom:0">Войди через Google</p>
+      <button class="login-btn-google" onclick="loginWithGoogle()">Google</button>
+      <div class="login-error" id="login-error"></div>
     </div>
   </section>
 
@@ -75,17 +78,21 @@
   </footer>
 
   <script>
-    function doLogin() {
-      if (login(document.getElementById('pass-input').value)) {
+    async function loginWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      try {
+        await firebase.auth().signInWithPopup(provider);
         const url = new URLSearchParams(location.search).get('redirect') || 'feed.html';
         location.href = url;
-      } else {
+      } catch (e) {
+        document.getElementById('login-error').textContent = 'Ошибка входа: ' + e.message;
         document.getElementById('login-error').style.display = 'block';
       }
     }
   </script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

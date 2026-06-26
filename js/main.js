@@ -18,34 +18,32 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const fbDb = firebase.database();
-const fbRef = fbDb.ref('posts');
 
-// MODULE: Auth / Авторизация
+// MODULE: Auth
 // ==========================================
 
-const AUTH_KEY = 'valholl_auth';
-const AUTH_PASS = 'valholl123';
+let currentUser = null;
+
+firebase.auth().onAuthStateChanged(user => {
+  currentUser = user;
+  if (!user && location.pathname.includes('new-post.html')) {
+    location.href = 'login.html?redirect=new-post.html';
+    return;
+  }
+  updateUI();
+});
 
 function isLoggedIn() {
-  return localStorage.getItem(AUTH_KEY) === 'true';
+  return !!currentUser;
 }
 
-function login(password) {
-  if (password === AUTH_PASS) {
-    localStorage.setItem(AUTH_KEY, 'true');
-    return true;
-  }
-  return false;
-}
-
-function logout() {
-  localStorage.removeItem(AUTH_KEY);
+function getUserUid() {
+  return currentUser ? currentUser.uid : null;
 }
 
 function toggleAuth() {
   if (isLoggedIn()) {
-    logout();
-    location.reload();
+    firebase.auth().signOut().then(() => { location.reload(); });
   } else {
     location.href = 'login.html';
   }
@@ -99,17 +97,27 @@ function getYouTubeId(url) {
   return m ? m[1] : null;
 }
 
+function userRef() {
+  const uid = getUserUid();
+  if (!uid) return null;
+  return fbDb.ref('posts/' + uid);
+}
+
 async function getPosts() {
-  const snap = await fbRef.once('value');
+  const ref = userRef();
+  if (!ref) return [];
+  const snap = await ref.once('value');
   const data = snap.val();
   if (!data) return [];
-  return Object.values(data).sort((a, b) => b.date?.localeCompare?.(a.date) || 0);
+  return Object.values(data).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 }
 
 async function savePosts(posts) {
+  const ref = userRef();
+  if (!ref) return;
   const obj = {};
   posts.forEach(p => { obj[p.id] = p; });
-  await fbRef.set(obj);
+  await ref.set(obj);
 }
 
 async function getPostById(id) {
@@ -239,6 +247,10 @@ function renderPostFull(post) {
 async function renderFeed() {
   const container = document.getElementById('feed-container');
   if (!container) return;
+  if (!isLoggedIn()) {
+    container.innerHTML = '<p class="section-text" style="text-align:center">Войди, чтобы увидеть ленту.</p>';
+    return;
+  }
   const posts = await getPosts();
   container.innerHTML = posts.map(post => renderPostCard(post)).join('');
 }
@@ -254,7 +266,7 @@ async function renderPostPage() {
   const post = await getPostById(id);
 
   if (!post) {
-    container.innerHTML = '<p class="section-text">Пост не найден.</p>';
+    container.innerHTML = '<p class="section-text" style="text-align:center">Пост не найден.</p>';
     return;
   }
 
@@ -279,15 +291,17 @@ async function renderPostPage() {
 // ---------- new post ----------
 
 window.publishNewPost = async function () {
+  if (!isLoggedIn()) return;
   const text = document.getElementById('post-text')?.value.trim();
   const image = document.getElementById('post-image')?.value.trim();
   const video = convertVideoUrl(document.getElementById('post-video')?.value.trim() || '');
   if (!text) return;
 
+  const userName = currentUser?.displayName || currentUser?.email || 'Valhöll';
   const posts = await getPosts();
   posts.unshift({
     id: Date.now().toString(),
-    author: 'Valhöll',
+    author: userName,
     date: new Date().toISOString().slice(0, 10),
     text,
     image,
@@ -300,22 +314,25 @@ window.publishNewPost = async function () {
   location.href = 'feed.html';
 };
 
-// ---------- init ----------
+// ---------- UI update on auth change ----------
 
-document.addEventListener('DOMContentLoaded', async function () {
+function updateUI() {
   document.querySelectorAll('.auth-btn').forEach(btn => {
     btn.textContent = isLoggedIn() ? 'Выйти' : 'Войти';
   });
+
   const controls = document.getElementById('feed-controls');
-  if (controls && !isLoggedIn()) {
-    controls.style.display = 'none';
+  if (controls) {
+    controls.style.display = isLoggedIn() ? 'block' : 'none';
   }
 
   if (document.getElementById('feed-container')) {
-    await renderFeed();
+    renderFeed();
   }
 
   if (document.getElementById('post-container')) {
-    await renderPostPage();
+    renderPostPage();
   }
-});
+}
+
+document.addEventListener('DOMContentLoaded', updateUI);
