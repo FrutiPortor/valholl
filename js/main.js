@@ -112,12 +112,20 @@ function deletePostFull(id) {
 
 // ---------- render card (grid preview) ----------
 
+function getYouTubeId(url) {
+  const m = url.match(/(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
 function renderPostCard(post) {
+  const vidId = post.video ? getYouTubeId(post.video) : null;
   const media = post.image
     ? `<img src="${post.image}" alt="" loading="lazy">`
-    : post.video
-      ? `<div class="post-card-preview-icon">🎬</div>`
-      : '';
+    : vidId
+      ? `<img src="https://img.youtube.com/vi/${vidId}/hqdefault.jpg" alt="" loading="lazy">`
+      : post.video
+        ? `<div class="post-card-preview-icon">🎬</div>`
+        : '';
 
   const shortText = post.text.length > 100 ? post.text.slice(0, 100) + '…' : post.text;
 
