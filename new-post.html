@@ -45,10 +45,10 @@
         </div>
 
         <div class="new-post-field">
-          <label class="new-post-label" for="post-video">Видео (YouTube)</label>
+          <label class="new-post-label" for="post-video">Видео</label>
           <div class="new-post-input-wrap">
             <span class="new-post-input-icon">🎬</span>
-            <input id="post-video" class="new-post-input new-post-input--with-icon" type="url" placeholder="https://youtube.com/embed/...">
+            <input id="post-video" class="new-post-input new-post-input--with-icon" type="url" placeholder="Ссылка на YouTube / RuTube / .mp4">
           </div>
         </div>
 
@@ -66,23 +66,21 @@
   </footer>
 
   <script>
-    function convertYouTubeUrl(url) {
+    function convertVideoUrl(url) {
       if (!url) return '';
-      const patterns = [
-        /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
-        /^([a-zA-Z0-9_-]{11})$/
-      ];
-      for (const p of patterns) {
-        const m = url.match(p);
-        if (m) return `https://www.youtube.com/embed/${m[1]}`;
-      }
+      const youtube = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/;
+      let m = url.match(youtube);
+      if (m) return `https://www.youtube.com/embed/${m[1]}`;
+      const rutube = /rutube\.ru\/video\/([a-zA-Z0-9_-]+)/;
+      m = url.match(rutube);
+      if (m) return `https://rutube.ru/play/embed/${m[1]}`;
       return url;
     }
 
     function publishPost() {
       const text = document.getElementById('post-text').value.trim();
       const image = document.getElementById('post-image').value.trim();
-      const video = convertYouTubeUrl(document.getElementById('post-video').value.trim());
+      const video = convertVideoUrl(document.getElementById('post-video').value.trim());
       if (!text) return;
 
       const posts = JSON.parse(localStorage.getItem('valholl_feed')) || [];

@@ -20,16 +20,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 const STORAGE_KEY = 'valholl_feed';
 
-function convertYouTubeUrl(url) {
+function convertVideoUrl(url) {
   if (!url) return '';
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
-    /^([a-zA-Z0-9_-]{11})$/
-  ];
-  for (const p of patterns) {
-    const m = url.match(p);
-    if (m) return `https://www.youtube.com/embed/${m[1]}`;
-  }
+  const youtube = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/;
+  let m = url.match(youtube);
+  if (m) return `https://www.youtube.com/embed/${m[1]}`;
+  const rutube = /rutube\.ru\/video\/([a-zA-Z0-9_-]+)/;
+  m = url.match(rutube);
+  if (m) return `https://rutube.ru/play/embed/${m[1]}`;
   return url;
 }
 
@@ -110,12 +108,15 @@ function renderFeed() {
 }
 
 function renderPost(post) {
-  const videoUrl = convertYouTubeUrl(post.video);
+  const videoUrl = convertVideoUrl(post.video);
+  const isMp4 = videoUrl.match(/\.mp4$/i);
   const media = post.image
     ? `<div class="post-media"><img src="${post.image}" alt="" loading="lazy"></div>`
-    : videoUrl
-      ? `<div class="post-media"><iframe src="${videoUrl}" allowfullscreen></iframe></div>`
-      : '';
+    : videoUrl && isMp4
+      ? `<div class="post-media"><video src="${videoUrl}" controls style="width:100%;border-radius:4px"></video></div>`
+      : videoUrl
+        ? `<div class="post-media"><iframe src="${videoUrl}" allowfullscreen></iframe></div>`
+        : '';
 
   const commentsHtml = post.comments.map(c =>
     `<div class="comment"><div class="comment-author">${c.author}</div><div class="comment-text">${c.text}</div></div>`
