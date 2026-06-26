@@ -1,0 +1,192 @@
+/* ========================================
+   МОДУЛЬ: Header / Навигация
+   Чтобы добавить новую ссылку — впиши <li> в index.html
+   ======================================== */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  padding: 1rem 2rem;
+  background: rgba(10, 10, 10, 0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-logo {
+  font-family: var(--font-gothic);
+  font-size: 2rem;
+  color: var(--color-accent);
+  letter-spacing: 4px;
+}
+
+.header-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+}
+
+.header-nav a {
+  font-family: var(--font-gothic);
+  font-size: 1.1rem;
+  color: var(--color-text);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+
+.header-nav a:hover {
+  color: var(--color-accent);
+}
+
+/* ========================================
+   МОДУЛЬ: Hero / Главный экран
+   ======================================== */
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+  background: radial-gradient(ellipse at center, #1a1510 0%, var(--color-bg) 70%);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.hero-title {
+  font-family: var(--font-gothic);
+  font-size: clamp(3rem, 10vw, 7rem);
+  color: var(--color-accent);
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  animation: fadeInUp 1s ease-out;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+  max-width: 600px;
+  margin-bottom: 2rem;
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================
+   МОДУЛЬ: Content Section / Секция контента
+   Копируй .section-block целиком для новой секции
+   ======================================== */
+
+.section-block {
+  padding: var(--spacing-section);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  background: var(--color-bg-secondary);
+}
+
+.section-title {
+  font-family: var(--font-gothic);
+  font-size: 2.5rem;
+  color: var(--color-accent);
+  letter-spacing: 4px;
+  text-align: center;
+  margin-bottom: 3rem;
+  text-transform: uppercase;
+}
+
+.section-text {
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 2rem auto;
+  line-height: 1.8;
+}
+
+/* ========================================
+   МОДУЛЬ: Grid Cards / Карточки
+   Добавляй .card в .cards-grid для новой карточки
+   ======================================== */
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  padding: 2rem;
+  border-radius: 4px;
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-4px);
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.card-title {
+  font-family: var(--font-gothic);
+  font-size: 1.3rem;
+  color: var(--color-accent);
+  letter-spacing: 2px;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.card-text {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* ========================================
+   МОДУЛЬ: Footer / Подвал
+   ======================================== */
+
+.footer {
+  border-top: 1px solid var(--color-border);
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.footer-logo {
+  font-family: var(--font-gothic);
+  font-size: 1.5rem;
+  color: var(--color-accent);
+  letter-spacing: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.footer-text {
+  opacity: 0.6;
+}

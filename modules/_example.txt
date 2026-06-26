@@ -1,0 +1,64 @@
+╔═══════════════════════════════════════════════════════╗
+║   Valhöll — инструкция по добавлению новых модулей   ║
+╚═══════════════════════════════════════════════════════╝
+
+━━━ КАК ДОБАВИТЬ НОВУЮ СЕКЦИЮ НА САЙТ ━━━
+
+1. Открой index.html
+
+2. Вставь новый блок в любое место между <body> и </body>:
+
+   <!-- ============================================
+        МОДУЛЬ: Название твоего модуля
+        ============================================ -->
+
+   <section class="section-block" id="my-new-section">
+     <h2 class="section-title">Заголовок</h2>
+     <p class="section-text">Твой текст здесь.</p>
+   </section>
+
+3. Если хочешь тёмный фон — добавь класс section-block--dark:
+
+   <section class="section-block section-block--dark">
+
+4. Если нужны карточки — используй cards-grid:
+
+   <section class="section-block section-block--dark">
+     <div class="section-block__inner">
+       <h2 class="section-title">Заголовок</h2>
+       <div class="cards-grid">
+         <div class="card">
+           <span class="card-icon">🔥</span>
+           <h3 class="card-title">Название</h3>
+           <p class="card-text">Описание</p>
+         </div>
+         <!-- копируй .card для новых карточек -->
+       </div>
+     </div>
+   </section>
+
+5. Добавь пункт в меню (шапка) — найди в index.html
+   <nav class="header-nav"> и вставь <li><a href="#my-new-section">Название</a></li>
+
+6. Сохрани файл и открой index.html в браузере.
+
+━━━ НАСТРОЙКА ЦВЕТОВ ━━━
+
+Открой css/variables.css и меняй значения:
+  --color-accent: #c9a84c;  ← золотой акцент
+  --color-bg: #0a0a0a;      ← фон
+  --color-text: #e0dcd0;    ← текст
+
+━━━ СТРУКТУРА ПРОЕКТА ━━━
+
+Valhöll/
+├── index.html          ← главная страница (собирай модули здесь)
+├── css/
+│   ├── variables.css   ← переменные (цвета, шрифты, отступы)
+│   ├── base.css        ← базовые стили (reset, body, ссылки)
+│   ├── modules.css     ← стили всех модулей
+│   └── style.css       ← импортирует всё выше
+├── js/
+│   └── main.js         ← скрипты (добавляй новые модули через // MODULE:)
+└── modules/
+    └── _example.txt    ← этот файл
