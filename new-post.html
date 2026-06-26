@@ -68,7 +68,7 @@
   </footer>
 
   <script>
-    if (!isLoggedIn()) { location.href = 'login.html?redirect=new-post.html'; }
+    if (localStorage.getItem('valholl_auth') !== 'true') { location.href = 'login.html?redirect=new-post.html'; }
 
     function convertVideoUrl(url) {
       if (!url) return '';
@@ -99,26 +99,11 @@
     }
 
     function publishPost() {
-      const text = document.getElementById('post-text').value.trim();
-      const image = document.getElementById('post-image').value.trim();
-      const video = convertVideoUrl(document.getElementById('post-video').value.trim());
-      if (!text) return;
-
-      const posts = JSON.parse(localStorage.getItem('valholl_feed')) || [];
-      posts.unshift({
-        id: Date.now().toString(),
-        author: 'Valhöll',
-        date: new Date().toISOString().slice(0, 10),
-        text,
-        image,
-        video,
-        likes: 0,
-        liked: false,
-        comments: []
-      });
-      localStorage.setItem('valholl_feed', JSON.stringify(posts));
-      location.href = 'feed.html';
+      publishNewPost();
     }
   </script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

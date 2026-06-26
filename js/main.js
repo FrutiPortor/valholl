@@ -1,7 +1,24 @@
 // ==========================================
 // Valhöll — основной скрипт
-// Добавляй новые модули через // MODULE:
 // ==========================================
+
+// Firebase init
+// ==========================================
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAjQJFRjl57wfnGIj4rNK_Ravw_VzGmZ24",
+  authDomain: "valholl-4c99b.firebaseapp.com",
+  databaseURL: "https://valholl-4c99b-default-rtdb.firebaseio.com",
+  projectId: "valholl-4c99b",
+  storageBucket: "valholl-4c99b.firebasestorage.app",
+  messagingSenderId: "361046183170",
+  appId: "1:361046183170:web:5ed6532e8296078423861b",
+  measurementId: "G-J8H9WK965X"
+};
+
+firebase.initializeApp(firebaseConfig);
+const fbDb = firebase.database();
+const fbRef = fbDb.ref('posts');
 
 // MODULE: Auth / Авторизация
 // ==========================================
@@ -34,30 +51,12 @@ function toggleAuth() {
   }
 }
 
-function requireAuth() {
-  if (!isLoggedIn()) {
-    location.href = 'login.html';
-    return false;
-  }
-  return true;
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.auth-btn').forEach(btn => {
-    btn.textContent = isLoggedIn() ? 'Выйти' : 'Войти';
-  });
-  const controls = document.getElementById('feed-controls');
-  if (controls && !isLoggedIn()) {
-    controls.style.display = 'none';
-  }
-});
-
 // MODULE: Mobile menu
 // ==========================================
 
 function toggleMenu() {
-  document.getElementById('nav-menu').classList.toggle('open');
-  document.querySelector('.burger').classList.toggle('active');
+  document.getElementById('nav-menu')?.classList.toggle('open');
+  document.querySelector('.burger')?.classList.toggle('active');
 }
 
 document.addEventListener('click', function (e) {
@@ -81,10 +80,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // ==========================================
-// MODULE: Feed / Лента (лайки, комментарии)
+// MODULE: Feed / Firebase data
 // ==========================================
-
-const STORAGE_KEY = 'valholl_feed';
 
 function convertVideoUrl(url) {
   if (!url) return '';
@@ -97,91 +94,64 @@ function convertVideoUrl(url) {
   return url;
 }
 
-function getPosts() {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) return JSON.parse(stored);
-
-  const defaults = [
-    {
-      id: '1', author: 'Valhöll', date: '2026-06-27',
-      text: 'Добро пожаловать в чертоги! Этот пост — демонстрация ленты.',
-      image: 'https://picsum.photos/seed/valholl1/700/400',
-      video: '',
-      likes: 3, liked: false,
-      comments: [
-        { author: 'Гость', text: 'Отлично! 🔥' }
-      ]
-    },
-    {
-      id: '2', author: 'Valhöll', date: '2026-06-26',
-      text: 'Сила и честь — вот что движет нами.',
-      image: 'https://picsum.photos/seed/valholl2/700/400',
-      video: '',
-      likes: 7, liked: false,
-      comments: []
-    },
-    {
-      id: '3', author: 'Valhöll', date: '2026-06-25',
-      text: 'Видео-контент скоро будет доступен.',
-      image: '',
-      video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-      likes: 1, liked: false,
-      comments: []
-    }
-  ];
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
-  return defaults;
+function getYouTubeId(url) {
+  const m = url.match(/(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
 }
 
-function savePosts(posts) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+async function getPosts() {
+  const snap = await fbRef.once('value');
+  const data = snap.val();
+  if (!data) return [];
+  return Object.values(data).sort((a, b) => b.date?.localeCompare?.(a.date) || 0);
 }
 
-function getPostById(id) {
-  return getPosts().find(p => p.id === id);
+async function savePosts(posts) {
+  const obj = {};
+  posts.forEach(p => { obj[p.id] = p; });
+  await fbRef.set(obj);
 }
 
-function toggleLike(id) {
-  const posts = getPosts();
+async function getPostById(id) {
+  const posts = await getPosts();
+  return posts.find(p => p.id === id);
+}
+
+async function toggleLike(id) {
+  const posts = await getPosts();
   const post = posts.find(p => p.id === id);
   if (!post) return;
   post.liked = !post.liked;
   post.likes += post.liked ? 1 : -1;
   if (post.likes < 0) post.likes = 0;
-  savePosts(posts);
+  await savePosts(posts);
 }
 
-function addComment(id, text) {
-  const posts = getPosts();
+async function addComment(id, text) {
+  const posts = await getPosts();
   const post = posts.find(p => p.id === id);
   if (!post) return;
   post.comments.push({ author: 'Гость', text });
-  savePosts(posts);
+  await savePosts(posts);
 }
 
-function deletePost(id) {
+async function deletePost(id) {
   if (!confirm('Удалить пост?')) return;
-  const posts = getPosts().filter(p => p.id !== id);
-  savePosts(posts);
+  const posts = (await getPosts()).filter(p => p.id !== id);
+  await savePosts(posts);
 }
 
-function deletePostCard(id) {
-  deletePost(id);
-  renderFeed();
+async function deletePostCard(id) {
+  await deletePost(id);
+  await renderFeed();
 }
 
-function deletePostFull(id) {
-  deletePost(id);
+async function deletePostFull(id) {
+  await deletePost(id);
   location.href = 'feed.html';
 }
 
 // ---------- render card (grid preview) ----------
-
-function getYouTubeId(url) {
-  const m = url.match(/(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
-  return m ? m[1] : null;
-}
 
 function renderPostCard(post) {
   const vidId = post.video ? getYouTubeId(post.video) : null;
@@ -193,7 +163,7 @@ function renderPostCard(post) {
         ? `<div class="post-card-preview-icon">🎬</div>`
         : '';
 
-  const shortText = post.text.length > 100 ? post.text.slice(0, 100) + '…' : post.text;
+  const shortText = post.text?.length > 100 ? post.text.slice(0, 100) + '…' : post.text || '';
 
   return `
     <div class="post-card post-card--preview">
@@ -202,13 +172,13 @@ function renderPostCard(post) {
         ${media ? `<div class="post-card-media">${media}</div>` : ''}
         <div class="post-card-body">
           <div class="post-header">
-            <span class="post-author">${post.author}</span>
-            <span>${post.date}</span>
+            <span class="post-author">${post.author || 'Valhöll'}</span>
+            <span>${post.date || ''}</span>
           </div>
           <div class="post-text">${shortText}</div>
           <div class="post-card-stats">
             <span>♥ ${post.likes || 0}</span>
-            <span>💬 ${post.comments.length}</span>
+            <span>💬 ${(post.comments || []).length}</span>
           </div>
         </div>
       </a>
@@ -229,7 +199,7 @@ function renderPostFull(post) {
         ? `<div class="post-media"><iframe src="${videoUrl}" allowfullscreen></iframe></div>`
         : '';
 
-  const commentsHtml = post.comments.map(c =>
+  const commentsHtml = (post.comments || []).map(c =>
     `<div class="comment"><div class="comment-author">${c.author}</div><div class="comment-text">${c.text}</div></div>`
   ).join('');
 
@@ -239,19 +209,19 @@ function renderPostFull(post) {
   return `
     <div class="post-card post-card--full" data-id="${post.id}">
       <div class="post-header">
-        <span class="post-author">${post.author}</span>
+        <span class="post-author">${post.author || 'Valhöll'}</span>
         <span class="post-header-right">
-          <span>${post.date}</span>
+          <span>${post.date || ''}</span>
           ${isLoggedIn() ? `<button class="post-del-btn" data-id="${post.id}" onclick="deletePostFull(this.dataset.id)">✕</button>` : ''}
         </span>
       </div>
-      <div class="post-text">${post.text}</div>
+      <div class="post-text">${post.text || ''}</div>
       ${media}
       <div class="post-actions">
         <button class="post-like-btn${likedClass}" data-id="${post.id}">
           ♥ <span class="post-like-count">${likesDisplay}</span>
         </button>
-        <span>💬 ${post.comments.length}</span>
+        <span>💬 ${(post.comments || []).length}</span>
       </div>
       <div class="post-comments post-comments--open">
         ${commentsHtml}
@@ -266,23 +236,22 @@ function renderPostFull(post) {
 
 // ---------- feed grid (feed.html) ----------
 
-function renderFeed() {
+async function renderFeed() {
   const container = document.getElementById('feed-container');
   if (!container) return;
-
-  const posts = getPosts();
+  const posts = await getPosts();
   container.innerHTML = posts.map(post => renderPostCard(post)).join('');
 }
 
 // ---------- single post page (post.html) ----------
 
-function renderPostPage() {
+async function renderPostPage() {
   const container = document.getElementById('post-container');
   if (!container) return;
 
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
-  const post = getPostById(id);
+  const post = await getPostById(id);
 
   if (!post) {
     container.innerHTML = '<p class="section-text">Пост не найден.</p>';
@@ -291,28 +260,62 @@ function renderPostPage() {
 
   container.innerHTML = renderPostFull(post);
 
-  container.querySelector('.post-like-btn')?.addEventListener('click', function () {
-    toggleLike(this.dataset.id);
-    renderPostPage();
+  container.querySelector('.post-like-btn')?.addEventListener('click', async function () {
+    await toggleLike(this.dataset.id);
+    await renderPostPage();
   });
 
-  container.querySelector('.comment-form')?.addEventListener('submit', function (e) {
+  container.querySelector('.comment-form')?.addEventListener('submit', async function (e) {
     e.preventDefault();
     const input = this.querySelector('.comment-input');
     const text = input.value.trim();
     if (text) {
-      addComment(this.dataset.id, text);
-      renderPostPage();
+      await addComment(this.dataset.id, text);
+      await renderPostPage();
     }
   });
 }
 
+// ---------- new post ----------
+
+window.publishNewPost = async function () {
+  const text = document.getElementById('post-text')?.value.trim();
+  const image = document.getElementById('post-image')?.value.trim();
+  const video = convertVideoUrl(document.getElementById('post-video')?.value.trim() || '');
+  if (!text) return;
+
+  const posts = await getPosts();
+  posts.unshift({
+    id: Date.now().toString(),
+    author: 'Valhöll',
+    date: new Date().toISOString().slice(0, 10),
+    text,
+    image,
+    video,
+    likes: 0,
+    liked: false,
+    comments: []
+  });
+  await savePosts(posts);
+  location.href = 'feed.html';
+};
+
 // ---------- init ----------
 
-if (document.getElementById('feed-container')) {
-  document.addEventListener('DOMContentLoaded', renderFeed);
-}
+document.addEventListener('DOMContentLoaded', async function () {
+  document.querySelectorAll('.auth-btn').forEach(btn => {
+    btn.textContent = isLoggedIn() ? 'Выйти' : 'Войти';
+  });
+  const controls = document.getElementById('feed-controls');
+  if (controls && !isLoggedIn()) {
+    controls.style.display = 'none';
+  }
 
-if (document.getElementById('post-container')) {
-  document.addEventListener('DOMContentLoaded', renderPostPage);
-}
+  if (document.getElementById('feed-container')) {
+    await renderFeed();
+  }
+
+  if (document.getElementById('post-container')) {
+    await renderPostPage();
+  }
+});
