@@ -39,17 +39,17 @@
         <div class="new-post-field">
           <label class="new-post-label" for="post-image">Изображение</label>
           <div class="new-post-input-wrap">
-            <span class="new-post-input-icon">🖼️</span>
-            <input id="post-image" class="new-post-input new-post-input--with-icon" type="url" placeholder="https://example.com/image.jpg">
+            <input id="post-image" class="new-post-input" type="url" placeholder="https://example.com/image.jpg" oninput="previewImage(this.value)">
           </div>
+          <div id="image-preview" class="new-post-preview"></div>
         </div>
 
         <div class="new-post-field">
           <label class="new-post-label" for="post-video">Видео</label>
           <div class="new-post-input-wrap">
-            <span class="new-post-input-icon">🎬</span>
-            <input id="post-video" class="new-post-input new-post-input--with-icon" type="url" placeholder="Ссылка на YouTube / RuTube / .mp4">
+            <input id="post-video" class="new-post-input" type="url" placeholder="Ссылка на YouTube / RuTube / .mp4" oninput="previewVideo(this.value)">
           </div>
+          <div id="video-preview" class="new-post-preview"></div>
         </div>
 
         <div class="new-post-actions">
@@ -75,6 +75,23 @@
       m = url.match(rutube);
       if (m) return `https://rutube.ru/play/embed/${m[1]}`;
       return url;
+    }
+
+    function previewImage(url) {
+      const el = document.getElementById('image-preview');
+      if (!url) { el.innerHTML = ''; return; }
+      el.innerHTML = `<img src="${url}" class="new-post-preview-img" onerror="this.parentElement.innerHTML=''">`;
+    }
+
+    function previewVideo(url) {
+      const el = document.getElementById('video-preview');
+      if (!url) { el.innerHTML = ''; return; }
+      const embed = convertVideoUrl(url);
+      if (embed.match(/\.mp4$/i)) {
+        el.innerHTML = `<video src="${embed}" class="new-post-preview-vid" controls></video>`;
+      } else if (embed) {
+        el.innerHTML = `<iframe src="${embed}" class="new-post-preview-iframe" allowfullscreen></iframe>`;
+      }
     }
 
     function publishPost() {
