@@ -19,7 +19,7 @@
 }
 
 .header-logo {
-  font-family: var(--font-gothic);
+  font-family: 'UnifrakturMaguntia', 'Times New Roman', serif;
   font-size: 1.5rem;
   color: var(--color-accent);
   letter-spacing: 4px;
@@ -263,10 +263,32 @@
 
 .footer {
   border-top: 1px solid var(--color-border);
-  padding: 3rem 2rem;
-  text-align: center;
+  padding: 2rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   color: var(--color-text-muted);
   font-size: 0.9rem;
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.footer-contact {
+  font-size: 0.8rem;
+}
+
+.footer-contact a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-contact a:hover {
+  color: var(--color-accent);
 }
 
 .footer-logo {
@@ -274,11 +296,11 @@
   font-size: 1.5rem;
   color: var(--color-accent);
   letter-spacing: 4px;
-  margin-bottom: 0.5rem;
 }
 
 .footer-text {
-  opacity: 0.6;
+  font-size: 0.75rem;
+  opacity: 0.5;
 }
 
 /* ========================================

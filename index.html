@@ -8,7 +8,7 @@
   <!-- Google Fonts: UnifrakturMaguntia -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
@@ -26,7 +26,6 @@
       <button class="burger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
       <ul id="nav-menu">
         <li><a href="feed.html">Лента</a></li>
-        <li><a href="#contact">Контакты</a></li>
         <li class="nav-user-item"><span class="user-name" id="user-name"></span><a class="auth-btn nav-btn" onclick="toggleAuth()">Войти</a></li>
       </ul>
     </nav>
@@ -44,25 +43,17 @@
   </section>
 
   <!-- ============================================
-       МОДУЛЬ: Contact / Контакты
-       ============================================ -->
-
-  <section class="section-block" id="contact">
-    <h2 class="section-title">Контакты</h2>
-    <p class="section-text">
-      Свяжись с нами, если готов стать частью Valhöll.
-      <br><br>
-      <a href="mailto:frutiportor.pf@gmail.com">frutiportor.pf@gmail.com</a>
-    </p>
-  </section>
-
-  <!-- ============================================
        МОДУЛЬ: Footer (подвал)
        ============================================ -->
 
   <footer class="footer">
+    <div class="footer-left">
+      <div class="footer-contact">
+        <a href="mailto:frutiportor.pf@gmail.com">frutiportor.pf@gmail.com</a>
+      </div>
+      <p class="footer-text">&copy; 2026 Valhöll. Все права защищены.</p>
+    </div>
     <div class="footer-logo">Valhöll</div>
-    <p class="footer-text">&copy; 2026 Valhöll. Все права защищены.</p>
   </footer>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
