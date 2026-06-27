@@ -899,7 +899,7 @@
   font-size: 0.85rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  background: none;
+  background: transparent;
   border: 1px solid var(--color-border);
   color: var(--color-text);
   padding: 0.4rem 1rem;
@@ -909,6 +909,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .sort-dropdown-btn:hover,
@@ -946,12 +948,14 @@
   text-align: left;
   font-family: var(--font-body);
   font-size: 0.85rem;
-  background: none;
+  background: transparent;
   border: none;
   color: var(--color-text-muted);
   padding: 0.5rem 1rem;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .sort-option:hover {
@@ -1065,10 +1069,12 @@
     font-size: 0.75rem;
     padding: 0.3rem 0.7rem;
     white-space: nowrap;
+    background: transparent;
   }
 
   .sort-dropdown-menu {
     min-width: 140px;
+    background: var(--color-bg-secondary);
   }
 
   .feed-section {

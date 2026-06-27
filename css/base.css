@@ -26,6 +26,14 @@ a:hover {
   color: #e0c060;
 }
 
+button {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: inherit;
+}
+
 img {
   max-width: 100%;
   height: auto;
