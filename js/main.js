@@ -17,21 +17,29 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 const fbDb = firebase.database();
 
 // MODULE: Auth
 // ==========================================
 
 let currentUser = null;
+let authReady = false;
 
 firebase.auth().onAuthStateChanged(user => {
   currentUser = user;
-  if (!user && location.pathname.includes('new-post.html')) {
-    location.href = 'login.html?redirect=new-post.html';
-    return;
-  }
+  authReady = true;
   updateUI();
 });
+
+// защита new-post.html: даём Firebase время восстановить сессию
+if (location.pathname.includes('new-post.html')) {
+  setTimeout(() => {
+    if (!firebase.auth().currentUser) {
+      location.href = 'login.html?redirect=new-post.html';
+    }
+  }, 500);
+}
 
 function isLoggedIn() {
   return !!currentUser;
