@@ -36,22 +36,37 @@
   </header>
 
   <div class="sort-bar" id="sort-bar">
-    <div class="sort-group">
-      <button class="sort-btn active" data-filter="type" data-value="all">Все</button>
-      <button class="sort-btn" data-filter="type" data-value="image">Изображение</button>
-      <button class="sort-btn" data-filter="type" data-value="video">Видео</button>
+    <div class="sort-dropdown">
+      <button class="sort-dropdown-btn" data-filter="type">
+        Все <span class="sort-arrow">▼</span>
+      </button>
+      <div class="sort-dropdown-menu">
+        <button class="sort-option active" data-value="all">Все</button>
+        <button class="sort-option" data-value="image">Изображение</button>
+        <button class="sort-option" data-value="video">Видео</button>
+      </div>
     </div>
-    <div class="sort-group">
-      <button class="sort-btn active" data-filter="sort" data-value="new">Новое</button>
-      <button class="sort-btn" data-filter="sort" data-value="best">Лучшее</button>
-      <button class="sort-btn" data-filter="sort" data-value="likes">По лайкам</button>
+    <div class="sort-dropdown">
+      <button class="sort-dropdown-btn" data-filter="sort">
+        Новое <span class="sort-arrow">▼</span>
+      </button>
+      <div class="sort-dropdown-menu">
+        <button class="sort-option active" data-value="new">Новое</button>
+        <button class="sort-option" data-value="best">Лучшее</button>
+        <button class="sort-option" data-value="likes">По лайкам</button>
+      </div>
     </div>
-    <div class="sort-group">
-      <button class="sort-btn active" data-filter="date" data-value="all">Всё время</button>
-      <button class="sort-btn" data-filter="date" data-value="today">Сегодня</button>
-      <button class="sort-btn" data-filter="date" data-value="week">Неделя</button>
-      <button class="sort-btn" data-filter="date" data-value="month">Месяц</button>
-      <button class="sort-btn" data-filter="date" data-value="year">Год</button>
+    <div class="sort-dropdown">
+      <button class="sort-dropdown-btn" data-filter="date">
+        Всё время <span class="sort-arrow">▼</span>
+      </button>
+      <div class="sort-dropdown-menu">
+        <button class="sort-option active" data-value="all">Всё время</button>
+        <button class="sort-option" data-value="today">Сегодня</button>
+        <button class="sort-option" data-value="week">Неделя</button>
+        <button class="sort-option" data-value="month">Месяц</button>
+        <button class="sort-option" data-value="year">Год</button>
+      </div>
     </div>
   </div>
 

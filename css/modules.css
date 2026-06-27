@@ -875,7 +875,7 @@
 }
 
 /* ========================================
-   МОДУЛЬ: Sort Bar
+   МОДУЛЬ: Sort Bar / Dropdowns
    ======================================== */
 
 .sort-bar {
@@ -886,56 +886,82 @@
   border-bottom: 1px solid var(--color-border);
   padding: 0.5rem 1.5rem;
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   align-items: center;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
 }
 
-.sort-bar::-webkit-scrollbar {
-  height: 3px;
+.sort-dropdown {
+  position: relative;
 }
 
-.sort-bar::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 2px;
-}
-
-.sort-group {
-  display: flex;
-  gap: 0.25rem;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.sort-group + .sort-group {
-  padding-left: 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-.sort-btn {
-  font-family: var(--font-body);
-  font-size: 0.78rem;
+.sort-dropdown-btn {
+  font-family: var(--font-gothic);
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   background: none;
-  border: 1px solid transparent;
-  color: var(--color-text-muted);
-  padding: 0.25rem 0.55rem;
-  cursor: pointer;
-  white-space: nowrap;
-  border-radius: 3px;
-  transition: color 0.3s, border-color 0.3s, background 0.3s;
-}
-
-.sort-btn:hover {
+  border: 1px solid var(--color-border);
   color: var(--color-text);
-  border-color: var(--color-border);
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: border-color 0.3s, color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.sort-btn.active {
-  color: var(--color-accent);
+.sort-dropdown-btn:hover,
+.sort-dropdown-btn:focus {
   border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.sort-arrow {
+  font-size: 0.6rem;
+  opacity: 0.6;
+}
+
+.sort-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 95;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  min-width: 160px;
+  padding: 0.25rem 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+.sort-dropdown-menu.open {
+  display: block;
+}
+
+.sort-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sort-option:hover {
   background: rgba(201, 168, 76, 0.1);
+  color: var(--color-text);
+}
+
+.sort-option.active {
+  color: var(--color-accent);
+  background: rgba(201, 168, 76, 0.08);
 }
 
 /* ========================================
@@ -1029,21 +1055,20 @@
 
   .sort-bar {
     top: 56px;
-    gap: 0.75rem;
+    gap: 0.5rem;
     padding: 0.5rem 0.75rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .sort-group + .sort-group {
-    padding-left: 0.5rem;
-    border-left: none;
+  .sort-dropdown-btn {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.7rem;
+    white-space: nowrap;
   }
 
-  .sort-bar {
-    flex-wrap: nowrap;
-  }
-
-  .sort-group {
-    flex-shrink: 0;
+  .sort-dropdown-menu {
+    min-width: 140px;
   }
 
   .feed-section {

@@ -308,9 +308,13 @@ function applyFilters() {
 }
 
 function filterVideos() {
-  document.querySelectorAll('.sort-btn[data-filter="type"]').forEach(b => b.classList.remove('active'));
-  const btn = document.querySelector('.sort-btn[data-filter="type"][data-value="video"]');
-  if (btn) btn.classList.add('active');
+  const btn = document.querySelector('.sort-dropdown-btn[data-filter="type"]');
+  const opt = document.querySelector('.sort-dropdown-btn[data-filter="type"] ~ .sort-dropdown-menu .sort-option[data-value="video"]');
+  if (btn && opt) {
+    btn.innerHTML = 'Видео <span class="sort-arrow">▼</span>';
+    document.querySelectorAll('.sort-dropdown-btn[data-filter="type"] ~ .sort-dropdown-menu .sort-option').forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+  }
   filterState.type = 'video';
   renderFeed();
   const feed = document.getElementById('feed');
@@ -326,16 +330,33 @@ function toggleFullscreenFeed() {
 }
 
 function initSortBar() {
-  document.querySelectorAll('.sort-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const group = this.closest('.sort-group');
-      if (group) {
-        group.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-      }
+  document.querySelectorAll('.sort-dropdown-btn').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const menu = this.nextElementSibling;
+      const isOpen = menu.classList.contains('open');
+      document.querySelectorAll('.sort-dropdown-menu.open').forEach(m => m.classList.remove('open'));
+      if (!isOpen) menu.classList.add('open');
+    });
+  });
+
+  document.querySelectorAll('.sort-option').forEach(opt => {
+    opt.addEventListener('click', function () {
+      const menu = this.closest('.sort-dropdown-menu');
+      const btn = menu.previousElementSibling;
+      const filter = btn.dataset.filter;
+
+      menu.querySelectorAll('.sort-option').forEach(o => o.classList.remove('active'));
       this.classList.add('active');
-      filterState[this.dataset.filter] = this.dataset.value;
+      btn.innerHTML = this.textContent.trim() + ' <span class="sort-arrow">▼</span>';
+      filterState[filter] = this.dataset.value;
+      menu.classList.remove('open');
       renderFeed();
     });
+  });
+
+  document.addEventListener('click', function () {
+    document.querySelectorAll('.sort-dropdown-menu.open').forEach(m => m.classList.remove('open'));
   });
 }
 
