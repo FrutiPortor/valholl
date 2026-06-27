@@ -244,6 +244,14 @@ function renderPostFull(post) {
 
 // ---------- feed grid (feed.html) ----------
 
+// MODULE: Feed filters & search
+const filterState = {
+  type: 'all',
+  sort: 'new',
+  date: 'all',
+  search: ''
+};
+
 async function renderFeed() {
   const container = document.getElementById('feed-container');
   if (!container) return;
@@ -252,7 +260,83 @@ async function renderFeed() {
     return;
   }
   const posts = await getPosts();
-  container.innerHTML = posts.map(post => renderPostCard(post)).join('');
+  container.innerHTML = filterPosts(posts).map(post => renderPostCard(post)).join('');
+}
+
+function filterPosts(posts) {
+  let result = [...posts];
+
+  if (filterState.search) {
+    const q = filterState.search.toLowerCase();
+    result = result.filter(p => p.text?.toLowerCase().includes(q));
+  }
+
+  if (filterState.type === 'image') {
+    result = result.filter(p => p.image);
+  } else if (filterState.type === 'video') {
+    result = result.filter(p => p.video);
+  }
+
+  const now = new Date();
+  if (filterState.date === 'today') {
+    const today = now.toISOString().slice(0, 10);
+    result = result.filter(p => p.date === today);
+  } else if (filterState.date === 'week') {
+    const d = new Date(now); d.setDate(d.getDate() - 7);
+    result = result.filter(p => p.date && new Date(p.date) >= d);
+  } else if (filterState.date === 'month') {
+    const d = new Date(now); d.setMonth(d.getMonth() - 1);
+    result = result.filter(p => p.date && new Date(p.date) >= d);
+  } else if (filterState.date === 'year') {
+    const d = new Date(now); d.setFullYear(d.getFullYear() - 1);
+    result = result.filter(p => p.date && new Date(p.date) >= d);
+  }
+
+  if (filterState.sort === 'new') {
+    result.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  } else if (filterState.sort === 'best' || filterState.sort === 'likes') {
+    result.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+  }
+
+  return result;
+}
+
+function applyFilters() {
+  const input = document.getElementById('search-input');
+  if (input) filterState.search = input.value;
+  renderFeed();
+}
+
+function filterVideos() {
+  document.querySelectorAll('.sort-btn[data-filter="type"]').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector('.sort-btn[data-filter="type"][data-value="video"]');
+  if (btn) btn.classList.add('active');
+  filterState.type = 'video';
+  renderFeed();
+  const feed = document.getElementById('feed');
+  if (feed) feed.scrollIntoView({ behavior: 'smooth' });
+}
+
+function toggleFullscreenFeed() {
+  document.body.classList.toggle('fullscreen-mode');
+  const btn = document.getElementById('fullscreen-btn');
+  if (btn) {
+    btn.textContent = document.body.classList.contains('fullscreen-mode') ? '✕' : '⛶';
+  }
+}
+
+function initSortBar() {
+  document.querySelectorAll('.sort-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const group = this.closest('.sort-group');
+      if (group) {
+        group.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+      }
+      this.classList.add('active');
+      filterState[this.dataset.filter] = this.dataset.value;
+      renderFeed();
+    });
+  });
 }
 
 // ---------- single post page (post.html) ----------
@@ -331,11 +415,6 @@ function updateUI() {
     }
   });
 
-  const controls = document.getElementById('feed-controls');
-  if (controls) {
-    controls.style.display = loggedIn ? 'block' : 'none';
-  }
-
   if (document.getElementById('feed-container')) {
     renderFeed();
   }
@@ -345,4 +424,7 @@ function updateUI() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', updateUI);
+document.addEventListener('DOMContentLoaded', () => {
+  updateUI();
+  initSortBar();
+});

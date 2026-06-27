@@ -15,27 +15,68 @@
 <body>
 
   <header class="header">
-    <div class="header-logo">Valhöll</div>
-    <nav class="header-nav">
-      <button class="burger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
-      <ul id="nav-menu">
-        <li><a href="feed.html">Лента</a></li>
-        <li><a href="index.html">Главная</a></li>
-        <li class="nav-user-item"><span class="user-name" id="user-name"></span><a class="auth-btn nav-btn" onclick="toggleAuth()">Войти</a></li>
-      </ul>
-    </nav>
+    <div class="header-left">
+      <div class="header-logo">Valhöll</div>
+      <a href="new-post.html" class="header-new-post">+ Новый пост</a>
+    </div>
+    <div class="header-search-wrap">
+      <input type="text" id="search-input" class="header-search-input" placeholder="Поиск по постам..." oninput="applyFilters()">
+    </div>
+    <div class="header-right">
+      <nav class="header-nav">
+        <button class="burger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+        <ul id="nav-menu">
+          <li><a href="index.html">Главная</a></li>
+          <li><a href="new-post.html">Новый пост</a></li>
+          <li class="nav-user-item"><span class="user-name" id="user-name"></span><a class="auth-btn nav-btn" onclick="toggleAuth()">Войти</a></li>
+        </ul>
+      </nav>
+      <button class="fullscreen-btn" id="fullscreen-btn" onclick="toggleFullscreenFeed()" title="На весь экран">⛶</button>
+    </div>
   </header>
 
-  <section class="section-block" id="feed">
-    <h2 class="section-title">Лента</h2>
-
-    <div class="feed-controls" id="feed-controls">
-      <a href="new-post.html" class="feed-btn feed-btn--new">+ Новый пост</a>
+  <div class="sort-bar" id="sort-bar">
+    <div class="sort-group">
+      <button class="sort-btn active" data-filter="type" data-value="all">Все</button>
+      <button class="sort-btn" data-filter="type" data-value="image">Изображение</button>
+      <button class="sort-btn" data-filter="type" data-value="video">Видео</button>
     </div>
-
-    <div class="feed-grid" id="feed-container">
+    <div class="sort-group">
+      <button class="sort-btn active" data-filter="sort" data-value="new">Новое</button>
+      <button class="sort-btn" data-filter="sort" data-value="best">Лучшее</button>
+      <button class="sort-btn" data-filter="sort" data-value="likes">По лайкам</button>
     </div>
+    <div class="sort-group">
+      <button class="sort-btn active" data-filter="date" data-value="all">Всё время</button>
+      <button class="sort-btn" data-filter="date" data-value="today">Сегодня</button>
+      <button class="sort-btn" data-filter="date" data-value="week">Неделя</button>
+      <button class="sort-btn" data-filter="date" data-value="month">Месяц</button>
+      <button class="sort-btn" data-filter="date" data-value="year">Год</button>
+    </div>
+  </div>
+
+  <section class="section-block feed-section" id="feed">
+    <div class="feed-grid" id="feed-container"></div>
   </section>
+
+  <nav class="bottom-nav" id="bottom-nav">
+    <a href="feed.html" class="bottom-nav-item active">
+      <span class="bottom-nav-icon">📋</span>
+      <span class="bottom-nav-label">Лента</span>
+    </a>
+    <a href="#" class="bottom-nav-item" onclick="event.preventDefault(); filterVideos()">
+      <span class="bottom-nav-icon">🎬</span>
+      <span class="bottom-nav-label">Видосы</span>
+    </a>
+    <a href="new-post.html" class="bottom-nav-item">
+      <span class="bottom-nav-icon">+</span>
+      <span class="bottom-nav-label">Новый</span>
+    </a>
+    <a href="#" class="bottom-nav-item" onclick="event.preventDefault(); toggleAuth()">
+      <span class="bottom-nav-icon">👤</span>
+      <span class="bottom-nav-label">Войти</span>
+    </a>
+  </nav>
 
   <footer class="footer">
     <div class="footer-logo">Valhöll</div>
