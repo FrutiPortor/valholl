@@ -97,15 +97,12 @@ function getYouTubeId(url) {
   return m ? m[1] : null;
 }
 
-function userRef() {
-  const uid = getUserUid();
-  if (!uid) return null;
-  return fbDb.ref('posts/' + uid);
+function feedRef() {
+  return fbDb.ref('feed');
 }
 
 async function getPosts() {
-  const ref = userRef();
-  if (!ref) return [];
+  const ref = feedRef();
   const snap = await ref.once('value');
   const data = snap.val();
   if (!data) return [];
@@ -113,8 +110,7 @@ async function getPosts() {
 }
 
 async function savePosts(posts) {
-  const ref = userRef();
-  if (!ref) return;
+  const ref = feedRef();
   const obj = {};
   posts.forEach(p => { obj[p.id] = p; });
   await ref.set(obj);
@@ -255,11 +251,11 @@ const filterState = {
 async function renderFeed() {
   const container = document.getElementById('feed-container');
   if (!container) return;
-  if (!isLoggedIn()) {
-    container.innerHTML = '<p class="section-text" style="text-align:center">Войди, чтобы увидеть ленту.</p>';
+  const posts = await getPosts();
+  if (posts.length === 0) {
+    container.innerHTML = '<p class="section-text" style="text-align:center">Пока нет постов.</p>';
     return;
   }
-  const posts = await getPosts();
   container.innerHTML = filterPosts(posts).map(post => renderPostCard(post)).join('');
 }
 
